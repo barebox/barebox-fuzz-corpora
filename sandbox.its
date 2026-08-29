@@ -1,0 +1,44 @@
+/dts-v1/;
+
+/ {
+        description = "fit image for fuzzing";
+        #address-cells = <1>;
+
+        images {
+                kernel {
+                        description = "kernel";
+                        data = /incbin/("/dev/null");
+                        type = "kernel";
+                        arch = "sandbox";
+                        os = "linux";
+                        compression = "none";
+                        hash-1 {
+                                algo = "sha256";
+                        };
+                };
+
+                fdt {
+                        description = "Flattened Device Tree blob";
+                        data = /incbin/("build/arch/sandbox/dts/sandbox.dtb");
+                        type = "flat_dt";
+                        arch = "sandbox";
+                        compression = "none";
+                        hash-1 {
+                                algo = "sha256";
+                        };
+                };
+        };
+
+        configurations {
+                default = "sandbox";
+                sandbox {
+                        kernel = "kernel";
+                        fdt = "fdt";
+                        signature {
+                                algo = "sha256,rsa4096";
+                                key-name-hint = "fit";
+                                sign-images = "fdt", "kernel";
+                        };
+                };
+        };
+};
